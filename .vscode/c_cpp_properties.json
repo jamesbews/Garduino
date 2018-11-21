@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}**",
+                "C:\\USers\\James\\Documents\\Arduino\\libraries",
+                "C:\\Users\\James\\Downloads\\arduino-1.8.7-windows (2)\\arduino-1.8.7\\libraries",
+                "C:\\Users\\James\\Downloads\\arduino-1.8.7-windows (2)\\arduino-1.8.7\\hardware\\arduino\\avr\\libraries",
+                "${workspaceFolder}/libraries/LiquidCrystal_I2C",
+                "C:/Users/James/Downloads/arduino-1.8.7-windows (2)/arduino-1.8.7/hardware/arduino/avr/cores/arduino",
+                "C:/Users/James/Downloads/arduino-1.8.7-windows (2)/arduino-1.8.7/hardware/arduino/avr/libraries/Wire/src",
+                "${workspaceFolder}/libraries/Adafruit_SleepyDog_Library"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "forcedInclude": [
+                "C:\\Users\\James\\Downloads\\arduino-1.8.7-windows (2)\\arduino-1.8.7\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
+            ]
+        }
+    ],
+    "version": 4
+}
