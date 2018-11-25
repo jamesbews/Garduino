@@ -1,6 +1,6 @@
-#include "dht11.h"
-#include "Adafruit_SleepyDog.h"
-#include "LiquidCrystal_I2C.h"
+#include <dht11.h>
+#include <Adafruit_SleepyDog.h>
+#include <LiquidCrystal_I2C.h>
 
 
 LiquidCrystal_I2C lcd(0x27,20,4); // SDA -> A4 SCL -> A5

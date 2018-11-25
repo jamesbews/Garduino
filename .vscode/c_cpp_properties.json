@@ -4,13 +4,11 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}**",
-                "C:\\USers\\James\\Documents\\Arduino\\libraries",
-                "C:\\Users\\James\\Downloads\\arduino-1.8.7-windows (2)\\arduino-1.8.7\\libraries",
-                "C:\\Users\\James\\Downloads\\arduino-1.8.7-windows (2)\\arduino-1.8.7\\hardware\\arduino\\avr\\libraries",
-                "${workspaceFolder}/libraries/LiquidCrystal_I2C",
-                "C:/Users/James/Downloads/arduino-1.8.7-windows (2)/arduino-1.8.7/hardware/arduino/avr/cores/arduino",
-                "C:/Users/James/Downloads/arduino-1.8.7-windows (2)/arduino-1.8.7/hardware/arduino/avr/libraries/Wire/src",
-                "${workspaceFolder}/libraries/Adafruit_SleepyDog_Library"
+                "C:\\Users\\James\\Documents\\Arduino\\libraries",
+                "C:\\Users\\James\\Documents\\Arduino\\libraries\\Adafruit_SleepyDog_Library",
+                "C:/Users/James/Documents/Arduino/libraries/LiquidCrystal_I2C",
+                "C:\\Users\\James\\Downloads\\Arduino\\arduino-1.8.7\\hardware\\arduino\\avr\\cores\\arduino"
+
             ],
             "defines": [
                 "_DEBUG",
@@ -22,7 +20,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64",
             "forcedInclude": [
-                "C:\\Users\\James\\Downloads\\arduino-1.8.7-windows (2)\\arduino-1.8.7\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
+                "C:\\Users\\James\\Downloads\\Arduino\\arduino-1.8.7\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
             ]
         }
     ],

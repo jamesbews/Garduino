@@ -1,3 +1,5 @@
 {
-    "C_Cpp.intelliSenseEngineFallback": "Disabled"
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "arduino.defaultBaudRate": 9600,
+    "arduino.path": "C:\\Users\\James\\Downloads\\Arduino\\arduino-1.8.7"
 }
