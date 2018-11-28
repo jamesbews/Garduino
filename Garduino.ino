@@ -1,9 +1,11 @@
-#include <dht11.h>
-#include <Adafruit_SleepyDog.h>
-#include <LiquidCrystal_I2C.h>
+#include "dht11.h"
+#include "Adafruit_SleepyDog.h"
+#include "LiquidCrystal_I2C.h"
+#include "DS3231.h"
 
 
 LiquidCrystal_I2C lcd(0x27,20,4); // SDA -> A4 SCL -> A5
+RTClib RTC;
 dht11 DHT11;
 
 static boolean blink = true;
@@ -22,6 +24,7 @@ static boolean blink = true;
 
 void setup() {
   Serial.begin(9600);
+  Wire.begin();
   pinMode(LED_BUILTIN, OUTPUT);
 
   pinMode(LIGHT_1, OUTPUT);
@@ -62,10 +65,8 @@ void setup() {
   lcd.print("Humidity: ");
   lcd.setCursor(0,2);
   lcd.print("Soil Moisture: ");
-  lcd.setCursor(0,3);
-  lcd.print("Merry Christmas!");
 
-  digitalWrite(LIGHT_1, HIGH);
+  // digitalWrite(LIGHT_1, HIGH);
   
 }
 
@@ -85,6 +86,11 @@ void loop() {
   lcd.setCursor(15, 2);
   lcd.print((int)getSoilMoisture());
   lcd.print("%");
+
+  DateTime now = RTC.now();
+  lcd.setCursor(0,3);
+  lcd.print(now.year(), DEC);
+  
 
   /** 
    *  Water pump
