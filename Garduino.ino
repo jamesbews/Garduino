@@ -1,22 +1,18 @@
 #include "dht11.h"
 #include "Adafruit_SleepyDog.h"
 #include "LiquidCrystal_I2C.h"
-#include "DS3231.h"
+#include "DS3232RTC.h"
 
 
 LiquidCrystal_I2C lcd(0x27,20,4); // SDA -> A4 SCL -> A5
-RTClib RTC;
 dht11 DHT11;
 
 static boolean blink = true;
+static boolean lightOn = false;
 
 #define SM_PIN 0 // A0
 #define DHT_PIN 2 // D2
-#define RELAY_PIN_1 3
-#define RELAY_PIN_2 4
-#define RELAY_PIN_3 5
-#define RELAY_PIN_4 6
-#define LIGHT_1 7
+#define LIGHT_1 6 // D6
 
 
 #define SOIL_MAX 600
@@ -26,7 +22,6 @@ void setup() {
   Serial.begin(9600);
   Wire.begin();
   pinMode(LED_BUILTIN, OUTPUT);
-
   pinMode(LIGHT_1, OUTPUT);
   
 
@@ -34,7 +29,7 @@ void setup() {
   lcd.backlight();
 
   lcd.setCursor(0,0);
-  lcd.print("Initializing system.");
+  lcd.print("Initializing...");
   delay(2000);
   while(!Serial) {
     delay(1000);
@@ -53,8 +48,7 @@ void setup() {
   }
 
   lcd.setCursor(0,3);
-  lcd.print("Reset at ");
-  lcd.print(countDown/1000); lcd.print(" seconds");
+  lcd.print("Tests passed ");
   delay(2000);
 
   lcd.clear();
@@ -67,41 +61,39 @@ void setup() {
   lcd.print("Soil Moisture: ");
 
   // digitalWrite(LIGHT_1, HIGH);
-  
+
+  setTime(16, 59, 50, 8, 12, 2018); // hour, minute, second, day, month year
+  RTC.set(now());
+       
 }
 
 void loop() {
   
-  DHT11.read(DHT_PIN);// initialize the reading
-  int humidity = DHT11.humidity;// get humidity
+//  DHT11.read(DHT_PIN);// initialize the reading
+//  int humidity = DHT11.humidity;// get humidity
+//
+//  lcd.setCursor(13, 0);
+//  lcd.print((int)getTemp('C'));
+//  lcd.print("C");
+//  
+//  lcd.setCursor(10, 1);
+//  lcd.print(humidity);
+//  lcd.print("%");
+//  
+//  lcd.setCursor(15, 2);
+//  lcd.print((int)getSoilMoisture());
+//  lcd.print("%");
 
-  lcd.setCursor(13, 0);
-  lcd.print((int)getTemp('C'));
-  lcd.print("C");
-  
-  lcd.setCursor(10, 1);
-  lcd.print(humidity);
-  lcd.print("%");
-  
-  lcd.setCursor(15, 2);
-  lcd.print((int)getSoilMoisture());
-  lcd.print("%");
+  digitalClockDisplay();
+//  lcd.setCursor(0,3);
+//  lcd.print(now.year(), DEC);
 
-  DateTime now = RTC.now();
-  lcd.setCursor(0,3);
-  lcd.print(now.year(), DEC);
-  
-
-  /** 
-   *  Water pump
-   */
-   /*
-  if (certainTime) {
-    digitalWrite(RELAY_PIN_1, HIGH);
-    delay(1000); // Turn on for 1 second
-    digitalWrite(RELAY_PIN_1, LOW);
+  if (!lightOn && hour() >= 17) {
+    digitalWrite(LIGHT_1, HIGH);
   }
-  */
+
+
+
   
   if (blink){
     digitalWrite(LED_BUILTIN, HIGH);
@@ -134,4 +126,28 @@ float getSoilMoisture() {
   float calc = ((SOIL_MAX - reading)/(SOIL_MAX - SOIL_MIN)) * 100;
   
   return calc;
+}
+
+void digitalClockDisplay()
+{
+    lcd.setCursor(0,3);
+    lcd.print(hour());
+    printDigits(minute());
+    printDigits(second());
+    lcd.print(' ');
+    lcd.print(' ');
+    lcd.print(day());
+    lcd.print('/');
+    lcd.print(month());
+    lcd.print('/');
+    lcd.print(year());
+}
+
+void printDigits(int digits)
+{
+    // utility function for digital clock display: prints preceding colon and leading 0
+    lcd.print(':');
+    if(digits < 10)
+        lcd.print('0');
+    lcd.print(digits);
 }
