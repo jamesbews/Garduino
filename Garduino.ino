@@ -8,11 +8,19 @@ LiquidCrystal_I2C lcd(0x27,20,4); // SDA -> A4 SCL -> A5
 dht11 DHT11;
 
 static boolean blink = true;
-static boolean lightOn = false;
+static boolean lightOneOn = false;
+static boolean lightTwoOn = false;
+static boolean motionDetected = false;
 
-#define SM_PIN 0 // A0
+static int lcdTimer = 10; // Turn on lcd for 10 seconds
+
+#define PLANT_1 0 // A0
+#define PLANT_2 1 // A1
 #define DHT_PIN 2 // D2
-#define LIGHT_1 6 // D6
+#define PIR_PIN 3 // D3
+#define LIGHT_1 5 // D5
+#define LIGHT_2 6 // D6
+// D7 is broken
 
 
 #define SOIL_MAX 600
@@ -23,6 +31,8 @@ void setup() {
   Wire.begin();
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LIGHT_1, OUTPUT);
+  pinMode(LIGHT_2, OUTPUT);
+  pinMode(PIR_PIN, INPUT);
   
 
   lcd.init();
@@ -53,46 +63,48 @@ void setup() {
 
   lcd.clear();
 
-  lcd.setCursor(0,0);
-  lcd.print("Temperature: ");
-  lcd.setCursor(0,1);
-  lcd.print("Humidity: ");
-  lcd.setCursor(0,2);
-  lcd.print("Soil Moisture: ");
-
-  // digitalWrite(LIGHT_1, HIGH);
-
-  setTime(16, 59, 50, 8, 12, 2018); // hour, minute, second, day, month year
+  setTime(17, 47, 10, 6, 1, 2019); // hour, minute, second, day, month year
   RTC.set(now());
        
 }
 
 void loop() {
-  
-//  DHT11.read(DHT_PIN);// initialize the reading
-//  int humidity = DHT11.humidity;// get humidity
-//
-//  lcd.setCursor(13, 0);
-//  lcd.print((int)getTemp('C'));
-//  lcd.print("C");
-//  
-//  lcd.setCursor(10, 1);
-//  lcd.print(humidity);
-//  lcd.print("%");
-//  
-//  lcd.setCursor(15, 2);
-//  lcd.print((int)getSoilMoisture());
-//  lcd.print("%");
 
-  digitalClockDisplay();
-//  lcd.setCursor(0,3);
-//  lcd.print(now.year(), DEC);
+  detectMovement();
 
-  if (!lightOn && hour() >= 17) {
-    digitalWrite(LIGHT_1, HIGH);
+  if (lcdTimer > 0) {
+    lcdTimer--;
   }
 
+  if (lcdTimer > 0) {
+    printTempAndHumidity();
 
+    printSoilMoisture();
+  
+    digitalClockDisplay();
+  }
+
+  if (lcdTimer == 0) {
+    lcd.noBacklight(); // Turn off lcd
+  }
+
+  if (!lightOneOn && hour() >= 6) {
+    digitalWrite(LIGHT_1, HIGH);
+    lightOneOn = true;
+  }
+  if (!lightTwoOn && hour() >= 7) {
+    digitalWrite(LIGHT_2, HIGH);
+    lightTwoOn = true;
+  }
+
+  if (lightOneOn && hour() >= 20) {
+    digitalWrite(LIGHT_1, LOW);
+    lightOneOn = false;
+  }
+  if (lightTwoOn && hour() >= 21) {
+    digitalWrite(LIGHT_2, LOW);
+    lightTwoOn = false;
+  }
 
   
   if (blink){
@@ -121,11 +133,46 @@ float getTemp(char type) {
   
 }
 
-float getSoilMoisture() {
-  float reading = (float)analogRead(SM_PIN);
+float getSoilMoisture(int plant) {
+  float reading = (float)analogRead(plant);
   float calc = ((SOIL_MAX - reading)/(SOIL_MAX - SOIL_MIN)) * 100;
   
   return calc;
+}
+
+void printTempAndHumidity() {
+  DHT11.read(DHT_PIN);// initialize the reading
+  int humidity = DHT11.humidity;// get humidity
+
+  lcd.setCursor(0, 0);
+  lcd.print("Temp: ");
+  lcd.print((int)getTemp('C'));
+  lcd.print("C");
+  lcd.print(" ");
+  
+  lcd.print("Hum: ");
+  lcd.print(humidity);
+  lcd.print("% ");
+}
+
+void printSoilMoisture() {
+  lcd.setCursor(0, 1);
+  lcd.print("Plant 1: ");
+  lcd.print((int)getSoilMoisture(PLANT_1));
+  lcd.print("% ");
+
+  lcd.setCursor(0, 2);
+  lcd.print("Plant 2: ");
+  lcd.print((int)getSoilMoisture(PLANT_2));
+  lcd.print("% ");
+}
+
+void detectMovement() {
+  int val = digitalRead(PIR_PIN);
+  if (val == HIGH) {
+    lcd.backlight(); // Turn on lcd backlight
+    lcdTimer = 10;
+  }
 }
 
 void digitalClockDisplay()
